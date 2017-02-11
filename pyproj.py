@@ -12,18 +12,32 @@ ROOM_WIDTH = 5
 #classes
 class Game():
         def __init__(self, player):
-                self.rooms = []
-                self.characters = [player]
+                # the player. "There can be only one."
                 self.player = player
 
+                # start with a set of no rooms
+                self.rooms = []
+
+                # Initalize the list of characters with the player himself.
+                self.characters = [player]
+
+                # items that may be interacted with, apart from characters
+                self.items = []
+
         def show(self):
+                # show() displays the status of the game, from the player's perspective, each turn.
+                # It calls Room.show() ONLY for the Room the player is in.
                 room = self.player.room
                 room.show()
                 self.player.show()
 
         def turn_crank(self):
+                # turn_crank() turns the crank to handle the processing for each turn in the game.
+                # It calls Room.turn_crank() for each Room in the game, allowing each element within to act.
                 for room in self.rooms:
-                    room.reset_area(self.characters)
+                    room.turn_crank(self.characters, self.items)
+
+                # It then shows the standard display
                 self.show()
 
 class Hero():
@@ -38,13 +52,12 @@ class Hero():
                 self.row = row
                 self.col = col
 
-                self.position = (0,0)
-
         def add_item(self,item):
                 self.inventory += item
 
         def show(self):
-                print("== {}'s Stats ==".format(self.name))
+                # show() prints the player's status in a standard way
+                print("== {}'s Status ==".format(self.name))
                 print("Level: {}".format(self.level))
                 print("Health: {}".format(self.health))
                 print("Holding: {}".format(", ".join(self.inventory)))
@@ -56,15 +69,23 @@ class Room():
                 self.mobs = []
                 self.entities = {}
 
-                # # initialize field of play for this room
-                # self.area = []
-
-        def reset_area(self, characters):
+        def reset(self):
+                # reset() sets a cleared background for the room's display
                 self.area = []
                 for row in range(ROOM_HEIGHT):
                         self.area.append([])
                         for col in range(ROOM_WIDTH):
                                 self.area[row].append(EMPTY_POSITION)
+
+        def turn_crank(self, characters, items):
+                # turn_crank() handles display of activity, movement, etc. for each element in the room.
+                # Ideally, it will call a turn_crank() method on each character and items in the room, allowing them
+                # to do their thing.
+
+                # start fresh
+                self.reset()
+
+                # place each character (This is where each character might "do it's thing".)
                 for character in characters:
                         if character.room == self:
                                 self.area[character.row][character.col] = character.char
