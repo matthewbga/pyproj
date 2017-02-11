@@ -5,6 +5,7 @@
 #imports
 from random import *
 
+EMPTY_POSITION = '.'
 ROOM_HEIGHT = 5
 ROOM_WIDTH = 5
 
@@ -45,7 +46,7 @@ class Room():
                 for row in range(ROOM_HEIGHT):
                         self.area.append([])
                         for col in range(ROOM_WIDTH):
-                                self.area[row].append("x")
+                                self.area[row].append(EMPTY_POSITION)
                 for character in game.characters:
                         if character.room == self:
                                 self.area[character.row][character.col] = character.char
@@ -59,7 +60,7 @@ class Room():
                 print("======= {} =======".format(self.name))
                 self.reset_area(g)
                 for row in self.area:
-                        print(row)
+                        print("".join(row))
 
 game = Game()
 room_1 = Room("Hall of the Mountain King")
